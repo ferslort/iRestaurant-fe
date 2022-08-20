@@ -2,9 +2,11 @@ import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/
 import { sliceAuth } from './redux/slices/auth';
 import storage from 'redux-persist/lib/storage';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import { sliceRestaurant } from './redux/slices/restaurant';
 
 const rootReducer = combineReducers({
-  auth: sliceAuth
+  auth: sliceAuth,
+  restaurant: sliceRestaurant
 });
 
 const persistConfig = {

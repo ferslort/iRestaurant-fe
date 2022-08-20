@@ -1,0 +1,77 @@
+.container-myAccount {
+  height: 100%;
+}
+
+.container-myAccount__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    font-size: 1.7rem;
+  }
+}
+
+.container-myAccount__body {
+  display: flex;
+  flex-flow: column;
+  grid-gap: 1rem;
+
+  .body__sidebar {
+    background-color: white;
+    border-radius: 1rem;
+    flex: 0 0 25%;
+
+    h2 {
+      font-size: 1.5rem;
+      padding: 1.3rem;
+    }
+
+    .body__avatar {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0 1.3rem;
+      text-align: center;
+
+      p {
+        font-size: 1rem;
+        margin-top: 1rem;
+      }
+
+      .ant-avatar.ant-avatar-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+
+    .body__options {
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0 1.3rem;
+      text-align: center;
+
+      ul {
+        width: 100%;
+        padding: 0rem !important;
+      }
+    }
+  }
+
+  .body__content {
+    background-color: white;
+    padding: 1.3rem;
+    border-radius: 1rem;
+    flex: 1 1 70%;
+  }
+}
+
+@media (min-width: 800px) {
+  .container-myAccount__body {
+    flex-flow: row;
+  }
+}

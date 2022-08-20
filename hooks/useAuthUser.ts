@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getDataLocal, setDataLocal } from '../utils/local';
 import jwtDecode from 'jwt-decode';
+import { useQuery } from '@apollo/client';
+import { GET_USER } from '../gql/user';
 import { useDispatch } from 'react-redux';
 import { setAuthUser } from '../redux/slices/auth';
 
@@ -20,8 +22,20 @@ const initialState: InitialState = {
 
 export const useAuthUser = () => {
   const [state, setState] = useState(initialState);
+  const [reload, setReload] = useState(false);
+  const [user, setUser] = useState(undefined);
+
+  const { data, loading } = useQuery(GET_USER);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (data?.findByOneUser && !loading) {
+      setUser(data.findByOneUser);
+      dispatch(setAuthUser(data.findByOneUser));
+    }
+    setReload(false);
+  }, [loading, data, reload]);
 
   useEffect(() => {
     setState({
@@ -32,7 +46,6 @@ export const useAuthUser = () => {
     getUser().then((res) => {
       if (res) {
         const user = jwtDecode(res) as object;
-        dispatch(setAuthUser(user));
         setState({
           ...state,
           user,
@@ -40,6 +53,7 @@ export const useAuthUser = () => {
           loading: false,
           token: res
         });
+        setReload(!reload);
       } else {
         setState({
           ...state,
@@ -47,6 +61,7 @@ export const useAuthUser = () => {
           auth: false,
           loading: false
         });
+        setReload(!reload);
       }
     });
   }, []);
@@ -62,9 +77,11 @@ export const useAuthUser = () => {
   const memoData = useMemo(() => {
     return {
       ...state,
-      setTokenUser
+      setTokenUser,
+      setReload,
+      user
     };
-  }, [state]);
+  }, [state, reload, user]);
 
   return memoData;
 };

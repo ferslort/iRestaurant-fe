@@ -13,8 +13,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "preserve",
+    "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/dashboard.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/dashboard.tsx"],
   "exclude": ["node_modules"]
 }

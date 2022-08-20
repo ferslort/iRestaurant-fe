@@ -1,15 +1,19 @@
-import { useMutation } from '@apollo/client';
 import { useFormik } from 'formik';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import { AUT_USER } from '../gql/auth';
 import { setTokenUser } from '../redux/slices/auth';
 import { useAuthUser } from '../hooks/useAuthUser';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase';
+import * as Sentry from '@sentry/browser';
 
-const FormLogin = ({ onSetToken }) => {
-  const [doAuthUser, { loading, error }] = useMutation(AUT_USER);
+interface IFormLogin {
+  onSetToken: typeof setTokenUser;
+}
 
+const FormLogin = ({ onSetToken }: IFormLogin) => {
   const { setTokenUser } = useAuthUser();
   const router = useRouter();
 
@@ -24,30 +28,22 @@ const FormLogin = ({ onSetToken }) => {
     }),
     onSubmit: async (values) => {
       try {
-        const {
-          data: { authUser }
-        } = await doAuthUser({
-          variables: {
-            input: {
-              email: values.email,
-              password: values.password
-            }
-          }
-        });
-        await setTokenUser(authUser);
-        onSetToken(authUser);
+        const user = await signInWithEmailAndPassword(auth, values.email, values.password);
+        const token = await user.user.getIdToken();
+        await setTokenUser(token);
+        onSetToken(token);
         router.push('dashboard');
       } catch (error) {
-        console.log('🚀 ~ file: form-login.js ~ line 22 ~ onSubmit: ~ error', error);
+        Sentry.captureException(error);
       }
     }
   });
 
   return (
-    <div className="content-inner">
+    <div className="content-inner custom-form-login">
       <div className="col-xl-12">
         <form>
-          <div className="custom-form-login">
+          <div>
             <div>
               <div className="input-group">
                 <input
@@ -87,6 +83,14 @@ const FormLogin = ({ onSetToken }) => {
             </div>
           </div>
         </form>
+      </div>
+      <div className="mt-5">
+        <p>
+          ¿Aun no tienes cuenta? Crea una
+          <Link href="/signup">
+            <a> AQUÍ</a>
+          </Link>
+        </p>
       </div>
     </div>
   );

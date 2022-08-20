@@ -17,10 +17,10 @@
 
 */
 
-@import "./abstract/abstract";
-@import "./../vendor/bootstrap/scss/bootstrap.scss";
-@import "./base/base";
-@import "./components/components";
-@import "./pages/pages";
-@import "./layout/layout";
-@import './components/custom/index';
+@import './abstract/abstract';
+@import './../vendor/bootstrap/scss/bootstrap.scss';
+@import './base/base';
+@import './components/components';
+@import './pages/pages';
+@import './layout/layout';
+@import './components/components/custom';
