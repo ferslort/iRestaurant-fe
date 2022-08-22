@@ -1,18 +1,19 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client';
 import { setContext } from '@apollo/client/link/context';
+import { auth } from './firebase';
 
 const httpLik = createUploadLink({
   uri: 'http://localhost:5001/irestaurant-359100/us-central1/graphql'
 });
 
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('auth_token_user_irestaurant');
+const authLink = setContext(async (_, { headers }) => {
+  const tokenUser = await auth.currentUser?.getIdToken();
 
   return {
     headers: {
       ...headers,
-      Authorization: token ? `Bearer ${token.replace(/"/gi, '')}` : ''
+      Authorization: tokenUser ? `Bearer ${tokenUser.replace(/"/gi, '')}` : ''
     }
   };
 });

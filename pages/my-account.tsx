@@ -12,7 +12,7 @@ import { GET_RESTAURANT } from '../gql/restaurant';
 import { signOut } from 'firebase/auth';
 import { auth } from '../config/firebase';
 import { useRouter } from 'next/router';
-import { removeDataLocal } from '../utils/local';
+import * as Sentry from '@sentry/browser';
 
 interface IMyAccount {
   user: any;
@@ -58,10 +58,10 @@ function MyAccount({ user }: IMyAccount) {
     try {
       await signOut(auth);
       await client.clearStore();
-      await client.resetStore();
-      removeDataLocal('auth_token_user_irestaurant');
       router.push('/login');
-    } catch (error) {}
+    } catch (error) {
+      Sentry.captureException(error);
+    }
   };
 
   const componentRender = () => {

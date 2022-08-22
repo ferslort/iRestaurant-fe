@@ -5,13 +5,11 @@ import { Avatar, Tabs } from 'antd';
 import { useState } from 'react';
 import PerfilAccount from '../element/myAccount/PerfilAccount';
 import { GET_USER } from '../gql/user';
-import { useApolloClient, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { GET_RESTAURANT } from '../gql/restaurant';
-import { signOut } from 'firebase/auth';
-import { auth } from '../config/firebase';
-import { useRouter } from 'next/router';
-import { removeDataLocal } from '../utils/local';
-import CreateBranch from '../element/myBranch/createbranch';
+import CreateBranch from '../element/myBranch/CreateBranch';
+import ListBranch from '../element/myBranch/ListBranch';
+import { GET_ALL_BRANCH } from '../gql/branch';
 
 interface IMyBranch {
   user: any;
@@ -19,58 +17,34 @@ interface IMyBranch {
 
 const { TabPane } = Tabs;
 function MyBranch({ user }: IMyBranch) {
-  const [activeTab, setActiveTab] = useState('perfil');
+  const [activeTab, setActiveTab] = useState('list-branch');
 
-  const { data } = useQuery(GET_USER);
-  const { data: dataRestaurant } = useQuery(GET_RESTAURANT);
+  const { data } = useQuery(GET_ALL_BRANCH);
+  console.log('🚀 ~ file: my-branchs.tsx ~ line 23 ~ MyBranch ~ data', data);
 
   const options = [
     {
       key: '1',
-      tab: 'Listado de Sucursales',
+      tab: 'Listar',
       sug: 'list-branch'
     },
     {
       key: '2',
-      tab: 'Crear Sucursal',
+      tab: 'Crear',
       sug: 'crear-branch'
-    },
-    {
-      key: '3',
-      tab: 'Cerrar sesión',
-      sug: 'cerrar-sesion'
     }
   ];
 
   const handleChangeOptions = async (sug: string) => {
-    if (sug === 'cerrar-sesion') {
-      await handleLogout();
-      return;
-    }
     setActiveTab(sug);
-  };
-
-  const router = useRouter();
-  const client = useApolloClient();
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      await client.clearStore();
-      await client.resetStore();
-      removeDataLocal('auth_token_user_irestaurant');
-      router.push('/login');
-    } catch (error) {
-      console.log('🚀 ~ file: my-branchs.tsx ~ line 64 ~ handleLogout ~ error', error);
-    }
   };
 
   const componentRender = () => {
     switch (activeTab) {
       case 'list-branch':
-        return <PerfilAccount user={data?.findByOneUser} />;
+        return <ListBranch user={data?.findByOneUser} />;
       case 'crear-branch':
-        return <CreateBranch restaurant={dataRestaurant?.findByOneRestaurant} />;
+        return <CreateBranch />;
       default:
         return null;
     }
